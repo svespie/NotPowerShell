@@ -1,5 +1,9 @@
-# nps
-Not PowerShell
+# NotPowerShell
+This is a fork from Ben0xA's original Not PowerShell (nps) project: https://github.com/Ben0xA/nps.
+
+Thus far, the only changes have been to do some minor refactoring to better reflect .NET project naming standards. The rest of this readme document is original and still valid in reference to the executable.
+
+One matter of note: the downloaded executable has been built from the updated project and updated accordingly. It should still behave as expected.
 
 Usage
 ```c:\Downloads>nps.exe
