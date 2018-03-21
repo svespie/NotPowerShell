@@ -7,6 +7,8 @@ namespace NotPowerShell
 {
     internal class Program
     {
+        private const string prompt = "> ";
+
         private static void Main(string[] args)
         {
             if (args.Length >= 1)
@@ -32,7 +34,7 @@ namespace NotPowerShell
             }
             else
             {
-                DisplayHelp();
+                DisplayShell();
             }
         }
 
@@ -43,28 +45,46 @@ namespace NotPowerShell
 
         private static void Encode(string[] args)
         {
+            Console.WriteLine("");
+
             if(args.Length == 2)
             {
-                var bytes = Encoding.Unicode.GetBytes(args[1]);
-                Console.WriteLine(Convert.ToBase64String(bytes));
+                Console.WriteLine(EncodeBase64(args[1]));
             }
             else 
             {
                 Console.WriteLine("usage: nps.exe -encode \"& commands; separated; by; semicolons;\"");
             }
+
+            Console.WriteLine("");
+        }
+
+        private static string EncodeBase64(string value)
+        {
+            var bytes = Encoding.Unicode.GetBytes(value);
+            
+            return Convert.ToBase64String(bytes);
         }
 
         private static void Decode(string[] args)
         {
+            Console.WriteLine("");
+
             if (args.Length == 2)
             {
-                var cmd = Encoding.Unicode.GetString(Convert.FromBase64String(args[1]));
-                Console.WriteLine(cmd);
+                Console.WriteLine(DecodeBase64(args[1]));
             }
             else
             {
                 Console.WriteLine("usage: nps.exe -decode {base_64_string}");
             }
+
+            Console.WriteLine("");
+        }
+
+        private static string DecodeBase64(string value)
+        {
+            return Encoding.Unicode.GetString(Convert.FromBase64String(value));
         }
 
         private static void ExecuteCommand(string[] args)
@@ -110,10 +130,49 @@ namespace NotPowerShell
 
             if (output != null)
             {
+                Console.WriteLine("");
+
                 foreach (var item in output)
                 {
+                    
                     Console.WriteLine(item.ToString());
+                    
                 }
+
+                if(output.Count > 0)
+                {
+                    Console.WriteLine("");
+                }
+            }
+        }
+
+        private static void DisplayShell()
+        {
+            Console.WriteLine("");
+            Console.WriteLine("NotPowerShell");
+            Console.WriteLine("");
+            Console.WriteLine("Type 'exit' to exit. Otherwise type commands like you normally would in a PowerShell instance and hit <enter>.");
+            Console.WriteLine("");
+
+            while(true)
+            {
+                Console.Write(prompt);
+                var input = Console.ReadLine();
+
+                if(string.IsNullOrEmpty(input))
+                {
+                    continue;
+                }
+
+                if(input.ToLower() == "exit")
+                {
+                    break;
+                }
+
+                var encodedInput = EncodeBase64(input);
+                var command = new string[] {"-encodedcommand", encodedInput};
+
+                ExecuteCommand(command);
             }
         }
     }
